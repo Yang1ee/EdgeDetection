@@ -5,24 +5,69 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EdgeDetection"
         mc:Ignorable="d"
-        Title="EdgeDetection" Height="408" Width="444">
-    <Grid Margin="0,0,10,-6">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="6*"/>
-            <ColumnDefinition Width="0*"/>
-            <ColumnDefinition Width="29*"/>
-            <ColumnDefinition Width="45*"/>
-            <ColumnDefinition Width="305*"/>
-            <ColumnDefinition Width="49*"/>
-        </Grid.ColumnDefinitions>
-        <Image x:Name="imageInput" HorizontalAlignment="Left" Height="200" Margin="4,92,0,0" VerticalAlignment="Top" Width="200" Grid.ColumnSpan="4" Grid.Column="1"/>
-        <Image x:Name="imageOutput" HorizontalAlignment="Left" Height="200" Margin="130,92,0,0" VerticalAlignment="Top" Width="200" Grid.Column="4" Grid.ColumnSpan="2"/>
-        <Button x:Name="buttonImport" Content="Import" HorizontalAlignment="Left" Margin="3,307,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.606,0.979" Click="buttonImport_Click" Grid.ColumnSpan="2" Grid.Column="2" Height="20" Width="40"/>
-        <Button x:Name="buttonApply" Content="Apply" HorizontalAlignment="Left" Margin="55,333,0,0" VerticalAlignment="Top" Click="buttonApply_Click" RenderTransformOrigin="0.651,1.167" Grid.Column="4" Height="20" Width="35"/>
-        <ComboBox x:Name="comboBoxEdgeDetectionSelection" HorizontalAlignment="Left" Margin="3,332,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.5,0.5" SelectedIndex="0" Grid.ColumnSpan="3" Grid.Column="2" Height="22">
-            <ComboBoxItem Content="Sobel"/>
-            <ComboBoxItem Content="Prewitt"/>
-        </ComboBox>
+        Title="EdgeDetection" Height="600" Width="700">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
+        <!-- Operator Selection -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Edge Operator:" VerticalAlignment="Center" Width="100"/>
+            <ComboBox x:Name="OperatorComboBox" Width="150"  SelectedIndex="0">
+                <ComboBoxItem Content="Sobel" />
+                <ComboBoxItem Content="Prewitt" />
+            </ComboBox>
+        </StackPanel>
+
+        <!-- Image Selection -->
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,0,0,10">
+            <TextBlock Text="Input Image:" VerticalAlignment="Center" Width="100"/>
+            <TextBox x:Name="ImagePathTextBox" Width="400" IsReadOnly="True"/>
+            <Button Content="Browse..." Click="BrowseButton_Click" Margin="5,0,0,0"/>
+        </StackPanel>
+
+        <!-- Run Button -->
+        <Button x:Name="RunButton" Content="Run Edge Detection"
+                Grid.Row="2" Width="200" Height="30"
+                HorizontalAlignment="Center"
+                Click="RunButton_Click" />
+
+        <!-- Output Label -->
+        <TextBlock x:Name="OutputTextBlock"
+                   Grid.Row="3"
+                   Margin="0,10,0,0"
+                   Text=""
+                   TextWrapping="Wrap"
+                   Foreground="DarkGreen"
+                   HorizontalAlignment="Center"/>
+
+        <!-- Image Previews -->
+        <Grid Grid.Row="4" Margin="0,20,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Input Preview -->
+            <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                <TextBlock Text="Input Image" FontWeight="Bold" Margin="0,0,0,5" HorizontalAlignment="Center"/>
+                <Border BorderBrush="Gray" BorderThickness="1">
+                    <Image x:Name="InputImagePreview" Width="300" Height="300" Stretch="Uniform"/>
+                </Border>
+            </StackPanel>
+
+            <!-- Output Preview -->
+            <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                <TextBlock Text="Output Image" FontWeight="Bold" Margin="0,0,0,5" HorizontalAlignment="Center"/>
+                <Border BorderBrush="Gray" BorderThickness="1">
+                    <Image x:Name="OutputImagePreview" Width="300" Height="300" Stretch="Uniform"/>
+                </Border>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

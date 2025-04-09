@@ -1,17 +1,10 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
+﻿using System.Windows;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using Microsoft.Win32;
-using EdgeDetection.ImageProcessing;
 using System.IO;
 using System.Drawing;
 using System.Diagnostics;
+using EdgeDetection.ImageProcessing;
 using EdgeDetection.GeneralHelper;
 
 namespace EdgeDetection
@@ -22,14 +15,13 @@ namespace EdgeDetection
     public partial class MainWindow : Window
     {
         private string _imagePath = "";
-        private const string LogFilePath = "system_log.txt";
         public MainWindow()
         {
             InitializeComponent();
             Logger.Info("Edge detection started.");
         }
 
-        private void buttonImport_Click(object sender, RoutedEventArgs e)
+        private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             LoadImage();
         }
@@ -42,22 +34,25 @@ namespace EdgeDetection
             if (openFileDialog.ShowDialog() == true)
             {
                 _imagePath = openFileDialog.FileName;
+                ImagePathTextBox.Text = openFileDialog.FileName;
                 BitmapImage bitmap = new BitmapImage();
                 bitmap.BeginInit();
                 bitmap.UriSource = new Uri(openFileDialog.FileName);
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
                 bitmap.EndInit();
-                imageInput.Source = bitmap;
+                InputImagePreview.Source = bitmap;
             }
         }
 
-        private void buttonApply_Click(object sender, RoutedEventArgs e)
+        private void RunButton_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(_imagePath)) return;
 
-            var imageData = LoadImageAsGrayscaleArray(_imagePath);
-            var selected = ((System.Windows.Controls.ComboBoxItem)comboBoxEdgeDetectionSelection.SelectedItem)?.Content.ToString();
-            var edgeOperator = OperatorFactory.GetOperator(selected);
+            //convert to greyscale
+            var imageData = ImageHandler.LoadImageAsGrayscaleArray(_imagePath);
+
+            var selected = ((System.Windows.Controls.ComboBoxItem)OperatorComboBox.SelectedItem)?.Content.ToString();
+            var edgeOperator = OperatorFactory.GetOperator(selected.ToLower());
 
             var processor = new EdgeDetectionProcessor(edgeOperator);
             Stopwatch stopwatch = new Stopwatch();
@@ -69,7 +64,7 @@ namespace EdgeDetection
                 $"' using {selected} operator in {stopwatch.ElapsedMilliseconds} ms";
             Logger.Info(logEntry);
 
-            using var bmp = ConvertByteArrayToBitmap(result);
+            using var bmp = ImageHandler.ConvertByteArrayToBitmap(result);
             bmp.Save("edge_output.bmp");
 
             using MemoryStream ms = new();
@@ -82,41 +77,9 @@ namespace EdgeDetection
             bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
             bitmapImage.EndInit();
 
-            imageOutput.Source = bitmapImage;
+            OutputImagePreview.Source = bitmapImage;
         }
 
-        private byte[,] LoadImageAsGrayscaleArray(string path)
-        {
-            using Bitmap bmp = new(path);
-            int width = bmp.Width;
-            int height = bmp.Height;
-            byte[,] imageData = new byte[width, height];
 
-            for (int x = 0; x < width; x++)
-                for (int y = 0; y < height; y++)
-                {
-                    System.Drawing.Color pixel = bmp.GetPixel(x, y);
-                    byte gray = (byte)((pixel.R + pixel.G + pixel.B) / 3);
-                    imageData[x, y] = gray;
-                }
-
-            return imageData;
-        }
-
-        private Bitmap ConvertByteArrayToBitmap(byte[,] imageData)
-        {
-            int width = imageData.GetLength(0);
-            int height = imageData.GetLength(1);
-            Bitmap bmp = new(width, height);
-
-            for (int x = 0; x < width; x++)
-                for (int y = 0; y < height; y++)
-                {
-                    byte value = imageData[x, y];
-                    bmp.SetPixel(x, y, System.Drawing.Color.FromArgb(value, value, value));
-                }
-
-            return bmp;
-        }
     }
 }
