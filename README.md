@@ -17,4 +17,12 @@ This project is a C# implementation of an **image edge detection algorithm** usi
 
 ---
 
+## 📘 UML Class Diagram
+This UML diagram shows how the Edge Detection WPF application is structured. It includes:
+- The `IEdgeDetectionOperator` interface and its implementations.
+- A `Processor` that uses the strategy pattern.
+- A `MainWindow` UI entry point.
+- A `UnitTests` class to ensure logic correctness.
+![UML Diagram](UML Diagram/ClassDiagram.png)
+
 

@@ -1,0 +1,47 @@
+@startuml
+title Edge Detection WPF Project - UML Diagram
+
+interface IEdgeDetectionOperator {
+    +ApplyEdgeDetection(imageData: byte[,]): byte[,]
+}
+
+class SobelOperator implements IEdgeDetectionOperator {
+    +ApplyEdgeDetection(imageData: byte[,]): byte[,]
+}
+
+class PrewittOperator implements IEdgeDetectionOperator {
+    +ApplyEdgeDetection(imageData: byte[,]): byte[,]
+}
+
+class EdgeDetectionProcessor {
+    -operator: IEdgeDetectionOperator
+    +EdgeDetectionProcessor(operator: IEdgeDetectionOperator)
+    +ProcessImage(imageData: byte[,]): byte[,]
+}
+
+class OperatorFactory {
+    +GetOperator(type: string): IEdgeDetectionOperator
+}
+
+class MainWindow {
+    -_imagePath: string
+    +LoadImage_Click(sender, args)
+    +Apply_Click(sender, args)
+    -LoadImageAsGrayscaleArray(path: string): byte[,]
+    -ConvertByteArrayToBitmap(imageData: byte[,]): Bitmap
+}
+
+class UnitTests {
+    +TestEdgeDetection_Sobel()
+    +TestEdgeDetection_Prewitt()
+}
+
+MainWindow --> OperatorFactory
+MainWindow --> EdgeDetectionProcessor
+EdgeDetectionProcessor --> IEdgeDetectionOperator
+OperatorFactory --> IEdgeDetectionOperator
+UnitTests ..> SobelOperator
+UnitTests ..> PrewittOperator
+UnitTests ..> OperatorFactory
+
+@enduml
