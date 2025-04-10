@@ -14,8 +14,4 @@
     <PackageReference Include="Emgu.CV.runtime.windows" Version="4.10.0.5680" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="UnitTesting\" />
-  </ItemGroup>
-
 </Project>

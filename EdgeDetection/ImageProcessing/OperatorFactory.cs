@@ -5,10 +5,10 @@ namespace EdgeDetection.ImageProcessing
     {
         public static IEdgeDetectionOperator GetOperator(string type)
         {
-            return type switch
+            return type.ToLower() switch
             {
-                "Sobel" => new SobelOperator(),
-                "Prewitt" => new PrewittOperator(),
+                "sobel" => new SobelOperator(),
+                "prewitt" => new PrewittOperator(),
                 _ => throw new ArgumentException("Invalid operator type")
             };
         }
