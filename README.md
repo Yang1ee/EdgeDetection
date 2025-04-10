@@ -23,6 +23,7 @@ This UML diagram shows how the Edge Detection WPF application is structured. It 
 - A `Processor` that uses the strategy pattern.
 - A `MainWindow` UI entry point.
 - A `UnitTests` class to ensure logic correctness.
-![UML Diagram](UML Diagram/ClassDiagram.png)
+
+![UML Diagram](UMLDiagram/ClassDiagram.png)
 
 
