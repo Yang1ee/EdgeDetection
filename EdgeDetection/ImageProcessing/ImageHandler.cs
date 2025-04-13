@@ -1,19 +1,13 @@
-﻿// ImageHandler.cs
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
+using System.Windows.Media.Imaging;
 
 namespace EdgeDetection.ImageProcessing
 {
 
     public static class ImageHandler
     {
-        // 3x3 Gaussian kernel
-        private static readonly double[,] GaussianKernel = {
-        { 1, 2, 1 },
-        { 2, 4, 2 },
-        { 1, 2, 1 }
-        };
-
         public static byte[,] LoadImage(string path)
         {
             using Bitmap bmp = new(path);
@@ -30,7 +24,11 @@ namespace EdgeDetection.ImageProcessing
             }
             return result;
         }
-
+        /// <summary>
+        /// Read the image from file and convert into the byte data
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public static byte[,] LoadImageAsGrayscaleArray(string path)
         {
             using Bitmap bmp = new(path);
@@ -48,7 +46,11 @@ namespace EdgeDetection.ImageProcessing
 
             return imageData;
         }
-
+        /// <summary>
+        /// Convert image byte data to Bitmap format
+        /// </summary>
+        /// <param name="imageData"></param>
+        /// <returns></returns>
         public static Bitmap ConvertByteArrayToBitmap(byte[,] imageData)
         {
             int width = imageData.GetLength(0);
@@ -64,36 +66,24 @@ namespace EdgeDetection.ImageProcessing
 
             return bmp;
         }
-
-        public static byte[,] ApplyGaussianFilter(byte[,] image)
+        /// <summary>
+        /// Convert Bitmap to bitmapImage. BitmapImage is use for display in the image viewer in WPF
+        /// </summary>
+        /// <param name="bmp"></param>
+        /// <returns></returns>
+        public static BitmapImage ConvertToBitmapImage(Bitmap bitmap)
         {
-            int width = image.GetLength(1);
-            int height = image.GetLength(0);
-            byte[,] result = new byte[height, width];
+            using var ms = new MemoryStream();
+            bitmap.Save(ms, ImageFormat.Bmp);
+            ms.Seek(0, SeekOrigin.Begin);
 
-            // Normalize kernel
-            double kernelSum = 16.0;
-
-            for (int y = 1; y < height - 1; y++)
-            {
-                for (int x = 1; x < width - 1; x++)
-                {
-                    double pixel = 0.0;
-
-                    for (int ky = -1; ky <= 1; ky++)
-                    {
-                        for (int kx = -1; kx <= 1; kx++)
-                        {
-                            pixel += image[y + ky, x + kx] * GaussianKernel[ky + 1, kx + 1];
-                        }
-                    }
-
-                    pixel /= kernelSum;
-                    result[y, x] = (byte)Math.Min(255, Math.Max(0, pixel));
-                }
-            }
-
-            return result;
+            var image = new BitmapImage();
+            image.BeginInit();
+            image.StreamSource = ms;
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.EndInit();
+            return image;
         }
+
     }
 }
